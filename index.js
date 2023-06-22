@@ -48,8 +48,8 @@ class Player {
   }
   update(){
     this.draw()
-    this.position.x += this.position.x
-    this.position.y += this.position.y
+    this.position.x += this.velocity.x
+    this.position.y += this.velocity.y
   }
 }
 
@@ -265,31 +265,78 @@ map.forEach((row, i) => {
   })
 })
 
-function animate() {
-  requestAnimationFrame(animate)
-  boundaries.forEach(boundary => {
-    boundary.draw()
-  })
-  player.draw()
+const keys = {
+  w: {
+    pressed: false
+  }, 
+  s: {
+    pressed: false
+  }, 
+  a: {
+    pressed: false
+  }, 
+  d: {
+    pressed: false
+  }, 
 }
-animate()
-
 addEventListener('keydown', ({key}) => {
   switch (key) {
     case 'w':
-      player.velocity.y = -5
+      keys.w.pressed = true
       break;
     case 's':
-      player.velocity.y = 5
+      keys.s.pressed = true
       break;
     case 'd':
-      player.velocity.x = 5
+      keys.d.pressed = true
       break;
     case 'a':
-      player.velocity.x = -5
+      keys.a.pressed = true
+      break;
+  }
+})
+addEventListener('keyup', ({key}) => {
+  switch (key) {
+    case 'w':
+      keys.w.pressed = false
+      break;
+    case 's':
+      keys.s.pressed = false
+      break;
+    case 'd':
+      keys.d.pressed = false
+      break;
+    case 'a':
+      keys.a.pressed = false
       break;
   }
   console.log(player.velocity)
 })
+
+function animate() {
+  requestAnimationFrame(animate)
+  c.clearRect(0, 0, canvas.width, canvas.height)
+  boundaries.forEach(boundary => {
+    boundary.draw()
+  })
+  player.update()
+  player.velocity.y = 0
+  player.velocity.x = 0
+
+  if (keys.w.pressed === true) {
+      player.velocity.y = -5
+  }
+  else if (keys.s.pressed === true) {
+      player.velocity.y = 5
+  }
+  else if (keys.a.pressed === true) {
+      player.velocity.x = -5
+  } 
+  else if (keys.d.pressed === true) {
+      player.velocity.x = 5
+  }
+}
+animate()
+
 
 
