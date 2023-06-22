@@ -53,10 +53,39 @@ class Player {
   }
 }
 
+class Enemy {
+  constructor({position,velocity}){
+    this.position = position
+    this.velocity = velocity
+    this.radius = 15
+  }
+  draw(){
+    c.beginPath()
+    c.fillStyle = 'red'
+    c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI*2)
+    c.fill()
+    c.closePath()
+  }
+  update(){
+    this.draw()
+    this.position.x += this.velocity.x
+    this.position.y += this.velocity.y
+  }
+}
+
 const boundaries = []
 const player = new Player({
   position: {
     x: Boundary.width + Boundary.width/2, y: Boundary.height + Boundary.height /2
+  },
+  velocity: {
+    x: 0, y:0
+  }
+})
+
+const enemy = new Enemy({
+  position: {
+    x: Boundary.width * 9 + Boundary.width/2, y:  Boundary.height + Boundary.height /2
   },
   velocity: {
     x: 0, y:0
@@ -310,7 +339,6 @@ addEventListener('keyup', ({key}) => {
       keys.a.pressed = false
       break;
   }
-  console.log(player.velocity)
 })
 
 function animate() {
@@ -334,12 +362,32 @@ function animate() {
       >=
       boundary.position.y
     ) {
-      player.velocity.y = 0
-      player.velocity.x = 0
+      enemy.velocity.y = 0
+      enemy.velocity.x = 0
+    }
+    if(enemy.position.y - enemy.radius + enemy.velocity.y 
+      <=
+      boundary.position.y + boundary.height
+      &&
+      enemy.position.x - enemy.radius + enemy.velocity.x 
+      <=
+      boundary.position.x + boundary.width
+      &&
+      enemy.position.x + enemy.radius + enemy.velocity.x 
+      >=
+      boundary.position.x
+      && 
+      enemy.position.y + enemy.radius + enemy.velocity.y
+      >=
+      boundary.position.y
+    ) {
+      enemy.velocity.y = 0
+      enemy.velocity.x = 0
     }
   })
   player.update()
-
+  enemy.update()
+  
   if (keys.w.pressed === true) {
       player.velocity.y = -5
   }
@@ -352,6 +400,22 @@ function animate() {
   else if (keys.d.pressed === true) {
       player.velocity.x = 5
   }
+  
+  const random = Math.random()*4
+  console.log(random)
+  if (random <= 4) {
+    enemy.velocity.y = -5
+  }
+  else if (random <= 3) {
+      enemy.velocity.y = 5
+  }
+  else if (random <= 2) {
+      enemy.velocity.x = -5
+  } 
+  else if (random <= 1) {
+      enemy.velocity.x = 5
+  }
+
 }
 animate()
 
