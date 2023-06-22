@@ -317,11 +317,28 @@ function animate() {
   requestAnimationFrame(animate)
   c.clearRect(0, 0, canvas.width, canvas.height)
   boundaries.forEach(boundary => {
-    boundary.draw()
+    boundary.draw() 
+    if(player.position.y - player.radius + player.velocity.y 
+      <=
+      boundary.position.y + boundary.height
+      &&
+      player.position.x - player.radius + player.velocity.x 
+      <=
+      boundary.position.x + boundary.width
+      &&
+      player.position.x + player.radius + player.velocity.x 
+      >=
+      boundary.position.x
+      && 
+      player.position.y + player.radius + player.velocity.y
+      >=
+      boundary.position.y
+    ) {
+      player.velocity.y = 0
+      player.velocity.x = 0
+    }
   })
   player.update()
-  player.velocity.y = 0
-  player.velocity.x = 0
 
   if (keys.w.pressed === true) {
       player.velocity.y = -5
