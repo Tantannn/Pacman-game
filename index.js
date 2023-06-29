@@ -37,7 +37,7 @@ class Player {
   constructor({ position, velocity }) {
     this.position = position;
     this.velocity = velocity;
-    this.radius = 15;
+    this.radius = 16;
   }
   draw() {
     c.beginPath();
@@ -317,15 +317,19 @@ addEventListener("keydown", ({ key }) => {
   switch (key) {
     case "w":
       keys.w.pressed = true;
+      lastKey = "w";
       break;
     case "s":
       keys.s.pressed = true;
+      lastKey = "s";
       break;
     case "d":
       keys.d.pressed = true;
+      lastKey = "d";
       break;
     case "a":
       keys.a.pressed = true;
+      lastKey = "a";
       break;
   }
 });
@@ -363,7 +367,7 @@ function animate() {
   requestAnimationFrame(animate);
   c.clearRect(0, 0, canvas.width, canvas.height);
 
-  if (keys.w.pressed === true) {
+  if (keys.w.pressed === true && lastKey === "w") {
     for (let i = 0; i < boundaries.length; i++) {
       const boundary = boundaries[i];
       if (
@@ -378,18 +382,75 @@ function animate() {
           rectangle: boundary,
         })
       ) {
-        player.velocity = 0;
+        player.velocity.y = 0;
         break;
       } else {
         player.velocity.y = -5;
       }
     }
-  } else if (keys.s.pressed === true) {
-    player.velocity.y = 5;
-  } else if (keys.a.pressed === true) {
-    player.velocity.x = -5;
-  } else if (keys.d.pressed === true) {
-    player.velocity.x = 5;
+  } else if (keys.s.pressed === true && lastKey === "s") {
+    for (let i = 0; i < boundaries.length; i++) {
+      const boundary = boundaries[i];
+      if (
+        easyMovement({
+          circle: {
+            ...player,
+            velocity: {
+              x: 0,
+              y: 5,
+            },
+          },
+          rectangle: boundary,
+        })
+      ) {
+        player.velocity.y = 0;
+        break;
+      } else {
+        player.velocity.y = 5;
+      }
+    }
+  } else if (keys.a.pressed === true && lastKey === "a") {
+    for (let i = 0; i < boundaries.length; i++) {
+      const boundary = boundaries[i];
+      if (
+        easyMovement({
+          circle: {
+            ...player,
+            velocity: {
+              x: -5,
+              y: 0,
+            },
+          },
+          rectangle: boundary,
+        })
+      ) {
+        player.velocity.x = 0;
+        break;
+      } else {
+        player.velocity.x = -5;
+      }
+    }
+  } else if (keys.d.pressed === true && lastKey === "d") {
+    for (let i = 0; i < boundaries.length; i++) {
+      const boundary = boundaries[i];
+      if (
+        easyMovement({
+          circle: {
+            ...player,
+            velocity: {
+              x: 5,
+              y: 0,
+            },
+          },
+          rectangle: boundary,
+        })
+      ) {
+        player.velocity.x = 0;
+        break;
+      } else {
+        player.velocity.x = 5;
+      }
+    }
   }
 
   boundaries.forEach((boundary) => {
