@@ -1,5 +1,6 @@
 const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
+const scoreId = document.querySelector("#score");
 canvas.width = innerWidth;
 canvas.height = innerHeight;
 
@@ -53,6 +54,21 @@ class Player {
   }
 }
 
+class Pellet {
+  constructor({ position, velocity }) {
+    this.position = position;
+    this.velocity = velocity;
+    this.radius = 4;
+  }
+  draw() {
+    c.beginPath();
+    c.fillStyle = "white";
+    c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+    c.fill();
+    c.closePath();
+  }
+}
+
 class Enemy {
   constructor({ position, velocity }) {
     this.position = position;
@@ -85,10 +101,12 @@ const player = new Player({
   },
 });
 
+const pellets = [];
+
 const enemy = new Enemy({
   position: {
     x: Boundary.width * 9 + Boundary.width / 2,
-    y: Boundary.height + Boundary.height / 2,
+    y: Boundary.height * 11 + Boundary.height / 2,
   },
   velocity: {
     x: 0,
@@ -284,20 +302,21 @@ map.forEach((row, i) => {
           })
         );
         break;
-      // case '.':
-      //   pellets.push(
-      //     new Pellet({
-      //       position: {
-      //         x: j * Boundary.width + Boundary.width / 2,
-      //         y: i * Boundary.height + Boundary.height / 2
-      //       }
-      //     })
-      //   )
-      //   break
+      case ".":
+        pellets.push(
+          new Pellet({
+            position: {
+              x: j * Boundary.width + Boundary.width / 2,
+              y: i * Boundary.height + Boundary.height / 2,
+            },
+          })
+        );
+        break;
     }
   });
 });
 
+let score = 0;
 let lastKey = "";
 const keys = {
   w: {
@@ -460,7 +479,35 @@ function animate() {
       player.velocity.x = 0;
     }
   });
+
+  pellets.forEach((pellet, i) => {
+    pellet.draw();
+    if (
+      Math.hypot(
+        pellet.position.x - player.position.x,
+        pellet.position.y - player.position.y
+      ) <
+      pellet.radius + player.radius
+    ) {
+      pellets.splice(i, 1);
+      score += 10;
+      scoreId.innerHTML = score;
+      if (score === 710) {
+        scoreId.innerHTML = `You are Victorious!`;
+      }
+    }
+  });
+
   player.update();
-  // enemy.update()
+  enemy.update();
+  if (
+    Math.hypot(
+      enemy.position.x - player.position.x,
+      enemy.position.y - player.position.y
+    ) <
+    enemy.radius + player.radius
+  ) {
+    scoreId.innerHTML = `Game Over!`;
+  }
 }
 animate();
