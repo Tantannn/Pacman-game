@@ -508,7 +508,7 @@ function animate() {
       !collisions.includes("right") &&
       easyMovement({
         circle: {
-          ...player,
+          ...enemy,
           velocity: {
             x: 5,
             y: 0,
@@ -523,7 +523,7 @@ function animate() {
       !collisions.includes("left") &&
       easyMovement({
         circle: {
-          ...player,
+          ...enemy,
           velocity: {
             x: -5,
             y: 0,
@@ -538,7 +538,7 @@ function animate() {
       !collisions.includes("up") &&
       easyMovement({
         circle: {
-          ...player,
+          ...enemy,
           velocity: {
             x: 0,
             y: -5,
@@ -553,10 +553,10 @@ function animate() {
       !collisions.includes("down") &&
       easyMovement({
         circle: {
-          ...player,
+          ...enemy,
           velocity: {
             x: 0,
-            y: -5,
+            y: 5,
           },
         },
         rectangle: boundary,
@@ -568,15 +568,15 @@ function animate() {
   if (collisions.length > enemy.prevCollisions.length) {
     enemy.prevCollisions = collisions;
   }
-  console.log(collisions)
   if (JSON.stringify(collisions) !== JSON.stringify(enemy.prevCollisions)) {
     if (enemy.velocity.x > 0) enemy.prevCollisions.push("right");
     else if (enemy.velocity.x < 0) enemy.prevCollisions.push("left");
-    else if (enemy.velocity.y > 0) enemy.prevCollisions.push("up");
-    else if (enemy.velocity.y < 0) enemy.prevCollisions.push("down");
-    const pathways = enemy.prevCollisions.filter((collisions) => {
-      return !collisions.includes(collisions);
+    else if (enemy.velocity.y < 0) enemy.prevCollisions.push("up");
+    else if (enemy.velocity.y > 0) enemy.prevCollisions.push("down");
+    const pathways = enemy.prevCollisions.filter((collision) => {
+      return !collisions.includes(collision);
     });
+    console.log({ pathways })
     const direction = pathways[Math.floor(Math.random() * pathways.length)];
 
     switch (direction) {
@@ -597,7 +597,7 @@ function animate() {
         enemy.velocity.y = -5
         break;
     }
-    console.log(pathways)
+    console.log(direction)
     enemy.prevCollisions = []
   }
 }
