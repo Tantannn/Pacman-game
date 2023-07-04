@@ -74,6 +74,7 @@ class Enemy {
     this.position = position;
     this.velocity = velocity;
     this.radius = 15;
+    this.prevCollisions = [];
   }
   draw() {
     c.beginPath();
@@ -109,7 +110,7 @@ const enemy = new Enemy({
     y: Boundary.height * 11 + Boundary.height / 2,
   },
   velocity: {
-    x: 0,
+    x: -5,
     y: 0,
   },
 });
@@ -500,14 +501,104 @@ function animate() {
 
   player.update();
   enemy.update();
-  if (
-    Math.hypot(
-      enemy.position.x - player.position.x,
-      enemy.position.y - player.position.y
-    ) <
-    enemy.radius + player.radius
-  ) {
-    scoreId.innerHTML = `Game Over!`;
+
+  const collisions = [];
+  boundaries.forEach((boundary) => {
+    if (
+      !collisions.includes("right") &&
+      easyMovement({
+        circle: {
+          ...player,
+          velocity: {
+            x: 5,
+            y: 0,
+          },
+        },
+        rectangle: boundary,
+      })
+    ) {
+      collisions.push("right");
+    }
+    if (
+      !collisions.includes("left") &&
+      easyMovement({
+        circle: {
+          ...player,
+          velocity: {
+            x: -5,
+            y: 0,
+          },
+        },
+        rectangle: boundary,
+      })
+    ) {
+      collisions.push("left");
+    }
+    if (
+      !collisions.includes("up") &&
+      easyMovement({
+        circle: {
+          ...player,
+          velocity: {
+            x: 0,
+            y: -5,
+          },
+        },
+        rectangle: boundary,
+      })
+    ) {
+      collisions.push("up");
+    }
+    if (
+      !collisions.includes("down") &&
+      easyMovement({
+        circle: {
+          ...player,
+          velocity: {
+            x: 0,
+            y: -5,
+          },
+        },
+        rectangle: boundary,
+      })
+    ) {
+      collisions.push("down");
+    }
+  });
+  if (collisions.length > enemy.prevCollisions.length) {
+    enemy.prevCollisions = collisions;
+  }
+  console.log(collisions)
+  if (JSON.stringify(collisions) !== JSON.stringify(enemy.prevCollisions)) {
+    if (enemy.velocity.x > 0) enemy.prevCollisions.push("right");
+    else if (enemy.velocity.x < 0) enemy.prevCollisions.push("left");
+    else if (enemy.velocity.y > 0) enemy.prevCollisions.push("up");
+    else if (enemy.velocity.y < 0) enemy.prevCollisions.push("down");
+    const pathways = enemy.prevCollisions.filter((collisions) => {
+      return !collisions.includes(collisions);
+    });
+    const direction = pathways[Math.floor(Math.random() * pathways.length)];
+
+    switch (direction) {
+      case 'down':
+        enemy.velocity.x = 5
+        enemy.velocity.y = 0
+        break;
+      case 'up':
+        enemy.velocity.x = -5
+        enemy.velocity.y = 0
+        break;
+      case 'right':
+        enemy.velocity.x = 0
+        enemy.velocity.y = 5
+        break;
+      case 'left':
+        enemy.velocity.x = 0
+        enemy.velocity.y = -5
+        break;
+    }
+    console.log(pathways)
+    enemy.prevCollisions = []
   }
 }
 animate();
