@@ -371,6 +371,7 @@ addEventListener("keyup", ({ key }) => {
 });
 
 function easyMovement({ circle, rectangle }) {
+  // const padding: Boundary.width / 2 - circle.radius
   return (
     circle.position.y - circle.radius + circle.velocity.y <=
       rectangle.position.y + rectangle.height &&
@@ -519,7 +520,7 @@ function animate() {
     ) {
       collisions.push("right");
     }
-    if (
+    else if (
       !collisions.includes("left") &&
       easyMovement({
         circle: {
@@ -534,7 +535,7 @@ function animate() {
     ) {
       collisions.push("left");
     }
-    if (
+    else if (
       !collisions.includes("up") &&
       easyMovement({
         circle: {
@@ -549,7 +550,7 @@ function animate() {
     ) {
       collisions.push("up");
     }
-    if (
+    else if (
       !collisions.includes("down") &&
       easyMovement({
         circle: {
@@ -576,29 +577,27 @@ function animate() {
     const pathways = enemy.prevCollisions.filter((collision) => {
       return !collisions.includes(collision);
     });
-    console.log({ pathways })
     const direction = pathways[Math.floor(Math.random() * pathways.length)];
-
+    console.log(direction)
     switch (direction) {
-      case 'down':
-        enemy.velocity.x = 5
-        enemy.velocity.y = 0
+      case "down":
+        enemy.velocity.x = 5;
+        enemy.velocity.y = 0;
         break;
-      case 'up':
-        enemy.velocity.x = -5
-        enemy.velocity.y = 0
+      case "up":
+        enemy.velocity.x = -5;
+        enemy.velocity.y = 0;
         break;
-      case 'right':
-        enemy.velocity.x = 0
-        enemy.velocity.y = 5
+      case "right":
+        enemy.velocity.x = 0;
+        enemy.velocity.y = 5;
         break;
-      case 'left':
-        enemy.velocity.x = 0
-        enemy.velocity.y = -5
+      case "left":
+        enemy.velocity.x = 0;
+        enemy.velocity.y = -5;
         break;
     }
-    console.log(direction)
-    enemy.prevCollisions = []
+    enemy.prevCollisions = [];
   }
 }
 animate();
