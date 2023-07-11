@@ -612,6 +612,6 @@ function animate() {
   });
 
   player.update();
-  enemy.update();
+  // enemy.update();
 }
 animate();
